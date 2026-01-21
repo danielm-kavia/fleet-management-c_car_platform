@@ -1,0 +1,15 @@
+{
+  "name": "fleet-management-c_car_platform",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Fleet management backend (MVP) for orgs, users, vehicles, and assignments with basic auth checks.",
+  "main": "src/index.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "@connected-car/shared": "file:../shared-c_car_platform",
+    "express": "4.21.2"
+  }
+}
