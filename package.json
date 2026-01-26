@@ -6,10 +6,16 @@
   "main": "src/index.js",
   "type": "commonjs",
   "scripts": {
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "test": "jest --passWithNoTests",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
   },
   "dependencies": {
     "@connected-car/shared": "file:../shared-c_car_platform",
     "express": "4.21.2"
+  },
+  "devDependencies": {
+    "jest": "^30.0.0"
   }
 }
