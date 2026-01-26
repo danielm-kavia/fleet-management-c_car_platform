@@ -1,9 +1,8 @@
 "use strict";
 
-const fs = require("fs");
-const path = require("path");
-
-/** @type {import("jest").Config} */
+/**
+ * Jest config for SWE.6 E2E standard suite.
+ */
 module.exports = {
   displayName: "e2e",
   testEnvironment: "node",
@@ -17,12 +16,8 @@ module.exports = {
   globalTeardown: "<rootDir>/tests/e2e/harness/jestGlobalTeardown.js",
 
   // Ensure the junit output directory exists (jest-junit does not always create it in all environments).
-  setupFilesAfterEnv: [
-    () => {
-      const outDir = path.resolve(__dirname, "../kavia-docs/TestReports/qualification/E2E/junit");
-      fs.mkdirSync(outDir, { recursive: true });
-    },
-  ],
+  // NOTE: setupFilesAfterEnv must be file paths (modules), not functions.
+  setupFilesAfterEnv: ["<rootDir>/tests/e2e/harness/ensureJunitDir.js"],
 
   reporters: [
     "default",
