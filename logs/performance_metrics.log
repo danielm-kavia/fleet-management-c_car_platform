@@ -99,3 +99,36 @@
 2026-01-21 22:30:21,882 - Knowledge - INFO - [WEBSOCKET] Sent: Type=progress_update, Size: 240, Duration: 0ms
 2026-01-21 22:30:22,090 - Knowledge - INFO - Saving knowledge to Redis...
 2026-01-21 22:30:22,258 - Knowledge - INFO - Knowledge saved to Redis successfully
+2026-01-26 17:44:32,241 - Knowledge - INFO - Created shared MongoDB connection pool
+2026-01-26 17:44:32,549 - Knowledge - INFO - Starting Knowledge Graph processing with 20 threads
+2026-01-26 17:44:32,705 - Knowledge - INFO - Initial configuration: chunk_size=65536, max_cache_size=500
+2026-01-26 17:44:32,855 - Knowledge - INFO - Knowledge Graph concurrency configuration: workers=20, max_batch_size=10, max_concurrent_llm_calls=50
+2026-01-26 17:44:33,800 - Knowledge - INFO - 🔍 _load_persisted_knowledge called - checking for Redis optimization
+2026-01-26 17:44:33,976 - Knowledge - WARNING - ❌ load_from_redis method not found - Redis support not attached
+2026-01-26 17:44:34,135 - Knowledge - INFO - load persisted knowledge: begin
+2026-01-26 17:44:34,364 - Knowledge - INFO - Persisted knowledge files in /app/data/T0015/309902/b2640eh/fleet-management-c_car_platform/.knowledge have been renamed to use .json
+2026-01-26 17:44:34,540 - Knowledge - INFO - Found code-base-name: https://github.com/danielm-kavia/fleet-management-c_car_platform.git:kavia-main
+2026-01-26 17:44:34,724 - Knowledge - INFO - Found code_base: <app.utils.kg_build.knowledge.KnowledgeCodeBase object at 0x7f8b11ee1ad0>
+2026-01-26 17:44:35,016 - Knowledge - INFO - Found code-base-name: https://github.com/danielm-kavia/fleet-management-c_car_platform.git:kavia-main
+2026-01-26 17:44:35,219 - Knowledge - INFO - Found code_base: <app.utils.kg_build.knowledge.KnowledgeCodeBase object at 0x7f8b11ee1ad0>
+2026-01-26 17:44:35,414 - Knowledge - INFO - persist ingested knowledge for /app/data/T0015/309902/b2640eh/fleet-management-c_car_platform/README.md
+2026-01-26 17:44:35,744 - Knowledge - INFO - [MONGODB_OP] Completed: persist, Collection: file_info, Duration: 123ms
+2026-01-26 17:44:37,728 - Knowledge - INFO - [REDIS_OP] Completed: store_embedding, Key: README.md, Duration: 1805ms
+2026-01-26 17:44:37,925 - Knowledge - INFO - persist search terms embedding for README.md
+2026-01-26 17:44:38,116 - Knowledge - INFO - process ingested knowledge for /app/data/T0015/309902/b2640eh/fleet-management-c_car_platform/README.md
+2026-01-26 17:44:38,318 - Knowledge - INFO - Loaded 1 files from persisted knowledge
+2026-01-26 17:44:38,476 - Knowledge - INFO - load persisted knowledge: end
+2026-01-26 17:44:38,641 - Knowledge - INFO - Redis support added with prefix knowledge:b2640eh:
+2026-01-26 17:44:38,815 - Knowledge - INFO - Starting knowledge initialization for ID: 6gBPvL-b2640eh
+2026-01-26 17:44:38,975 - Knowledge - INFO - 🔍 Checking Redis for build_id: b2640eh
+2026-01-26 17:44:39,161 - Knowledge - INFO - 🔍 Full session ID: 6gBPvL-b2640eh
+2026-01-26 17:44:39,326 - Knowledge - INFO - 🔍 Redis prefix will be: knowledge:b2640eh:
+2026-01-26 17:44:39,505 - Knowledge - INFO - 🔍 Using attached load_from_redis() method
+2026-01-26 17:44:39,711 - Knowledge - INFO - 🔍 Attempting to load knowledge from Redis...
+2026-01-26 17:44:39,884 - Knowledge - INFO - 🔍 Using derived instance_id for Redis lookup: b2640eh
+2026-01-26 17:44:40,052 - Knowledge - INFO - ✅ Redis cache found! Loading knowledge...
+2026-01-26 17:44:40,249 - Knowledge - INFO - ✅ Successfully loaded from Redis: 1 files
+2026-01-26 17:44:40,406 - Knowledge - INFO - ✅ Redis load complete: 1 files in 0.90s
+2026-01-26 17:44:40,564 - Knowledge - INFO - ⚡ Total Redis path: 0.90s (vs ~300s from disk)
+2026-01-26 17:44:40,781 - Knowledge - INFO - Saving knowledge to Redis...
+2026-01-26 17:44:40,975 - Knowledge - INFO - Knowledge saved to Redis successfully
