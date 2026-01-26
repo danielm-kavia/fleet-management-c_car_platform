@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="@connected-car/fleet-management integration (vehicle-state flow, coverage)" tests="4" failures="0" errors="0" time="0.229">
+  <testsuite name="integration: fleet-management → vehicle-state flow (SWE.5)" errors="0" failures="0" skipped="0" timestamp="2026-01-26T18:50:16" time="0.196" tests="4">
+    <testcase classname="integration: fleet-management → vehicle-state flow (SWE.5) Happy path: vehicle-state has current state for a known vehicle after POST /state (and fleet-management is healthy)" name="integration: fleet-management → vehicle-state flow (SWE.5) Happy path: vehicle-state has current state for a known vehicle after POST /state (and fleet-management is healthy)" time="0.026" file="tests/integration/fleet-management-vehicle-state.flow.spec.js">
+    </testcase>
+    <testcase classname="integration: fleet-management → vehicle-state flow (SWE.5) Error path: invalid request (bad vehicleId) returns 4xx from vehicle-state" name="integration: fleet-management → vehicle-state flow (SWE.5) Error path: invalid request (bad vehicleId) returns 4xx from vehicle-state" time="0.004" file="tests/integration/fleet-management-vehicle-state.flow.spec.js">
+    </testcase>
+    <testcase classname="integration: fleet-management → vehicle-state flow (SWE.5) Error path: vehicle-state not-found for a vehicle returns 404 (FM should map similarly when it implements the proxy)" name="integration: fleet-management → vehicle-state flow (SWE.5) Error path: vehicle-state not-found for a vehicle returns 404 (FM should map similarly when it implements the proxy)" time="0.003" file="tests/integration/fleet-management-vehicle-state.flow.spec.js">
+    </testcase>
+    <testcase classname="integration: fleet-management → vehicle-state flow (SWE.5) Optional auth behavior: no-op unless AUTH_REQUIRED=true" name="integration: fleet-management → vehicle-state flow (SWE.5) Optional auth behavior: no-op unless AUTH_REQUIRED=true" time="0" file="tests/integration/fleet-management-vehicle-state.flow.spec.js">
+    </testcase>
+  </testsuite>
+</testsuites>
