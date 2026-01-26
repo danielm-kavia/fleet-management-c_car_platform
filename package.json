@@ -11,7 +11,9 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "test:integration": "jest --config jest.integration.config.js --runInBand",
-    "test:integration:coverage": "jest --config jest.integration.coverage.config.js --runInBand"
+    "test:integration:coverage": "jest --config jest.integration.coverage.config.js --runInBand",
+    "test:e2e": "jest --config jest.e2e.config.js --runInBand",
+    "test:e2e:coverage": "jest --config jest.e2e.coverage.config.js --runInBand"
   },
   "dependencies": {
     "@connected-car/shared": "file:../shared-c_car_platform",

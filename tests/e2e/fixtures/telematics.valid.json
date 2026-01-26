@@ -1,0 +1,10 @@
+{
+  "schemaVersion": "v1",
+  "vehicleId": "VIN_E2E_001",
+  "timestamp": "2025-01-01T00:00:00.000Z",
+  "speedKph": 55,
+  "batteryPct": 77,
+  "fuelPct": 12,
+  "latitude": 37.77,
+  "longitude": -122.41
+}
