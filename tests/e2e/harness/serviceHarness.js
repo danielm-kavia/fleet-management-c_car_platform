@@ -3,7 +3,7 @@
 const path = require("path");
 const fs = require("fs");
 const os = require("os");
-const { spawn } = require("child_process");
+const { spawn, spawnSync } = require("child_process");
 const { httpJson } = require("../helpers/httpClient");
 
 const DEFAULT_TIMEOUT_MS = 30_000;
@@ -24,43 +24,6 @@ function pidFilePath() {
 
 function sleep(ms) {
   return new Promise((r) => setTimeout(r, ms));
-}
-
-/**
- * PUBLIC_INTERFACE
- * Compute deterministic SWE.6 E2E ports and base URLs.
- *
- * Defaults (chosen to avoid collisions with existing integration harnesses):
- * - vehicle-state: 3401 (env VS_E2E_PORT)
- * - telematics-ingestion: 3402 (env TI_E2E_PORT)
- * - vehicle-gateway: 3404 (env GW_E2E_PORT)
- * - remote-commands: 3406 (env RC_E2E_PORT)
- * - fleet-management: 3410 (env FM_E2E_PORT)
- *
- * @returns {{
- *  VEHICLE_STATE_BASE_URL: string,
- *  TELEMATICS_INGESTION_BASE_URL: string,
- *  VEHICLE_GATEWAY_BASE_URL: string,
- *  REMOTE_COMMANDS_BASE_URL: string,
- *  FLEET_MANAGEMENT_BASE_URL: string,
- *  ports: { vs: number, ti: number, gw: number, rc: number, fm: number }
- * }}
- */
-function buildHarnessEnv() {
-  const vs = Number(process.env.VS_E2E_PORT || 3401);
-  const ti = Number(process.env.TI_E2E_PORT || 3402);
-  const gw = Number(process.env.GW_E2E_PORT || 3404);
-  const rc = Number(process.env.RC_E2E_PORT || 3406);
-  const fm = Number(process.env.FM_E2E_PORT || 3410);
-
-  return {
-    VEHICLE_STATE_BASE_URL: `http://127.0.0.1:${vs}`,
-    TELEMATICS_INGESTION_BASE_URL: `http://127.0.0.1:${ti}`,
-    VEHICLE_GATEWAY_BASE_URL: `http://127.0.0.1:${gw}`,
-    REMOTE_COMMANDS_BASE_URL: `http://127.0.0.1:${rc}`,
-    FLEET_MANAGEMENT_BASE_URL: `http://127.0.0.1:${fm}`,
-    ports: { vs, ti, gw, rc, fm },
-  };
 }
 
 async function waitForHealthy(baseUrl, timeoutMs = DEFAULT_TIMEOUT_MS) {
@@ -98,6 +61,95 @@ function spawnService({ name, cwd, env, nodeArgs }) {
   });
 
   return child;
+}
+
+function ensureDirectoryExists(dirPath) {
+  fs.mkdirSync(dirPath, { recursive: true });
+}
+
+function hasNodeModules(serviceRoot) {
+  return fs.existsSync(path.join(serviceRoot, "node_modules"));
+}
+
+function canUseNpmCi(serviceRoot) {
+  return fs.existsSync(path.join(serviceRoot, "package-lock.json"));
+}
+
+function runNpmInstallLike(serviceName, serviceRoot) {
+  // Keep logs concise; detailed npm output tends to be huge in CI.
+  process.stdout.write(`[harness] deps: installing ${serviceName} dependencies...\n`);
+
+  // Prefer "npm ci" for reproducibility when lockfile exists.
+  const useCi = canUseNpmCi(serviceRoot);
+  const cmd = process.platform === "win32" ? "npm.cmd" : "npm";
+  const args = useCi ? ["ci", "--no-audit", "--no-fund"] : ["install", "--no-audit", "--no-fund"];
+
+  const res = spawnSync(cmd, args, {
+    cwd: serviceRoot,
+    stdio: "inherit",
+    env: process.env,
+  });
+
+  if (res.status !== 0) {
+    throw new Error(
+      `Failed to install dependencies for ${serviceName} in ${serviceRoot} (command: ${cmd} ${args.join(
+        " "
+      )}, exit=${res.status})`
+    );
+  }
+
+  process.stdout.write(`[harness] deps: ${serviceName} dependencies ready.\n`);
+}
+
+function ensureServiceDependencies(serviceName, serviceRoot) {
+  if (hasNodeModules(serviceRoot)) return;
+
+  // node_modules missing -> install.
+  runNpmInstallLike(serviceName, serviceRoot);
+
+  // Defensive: ensure node_modules now exists; if not, fail early with actionable message.
+  if (!hasNodeModules(serviceRoot)) {
+    throw new Error(
+      `Dependency install completed but node_modules is still missing for ${serviceName} at ${serviceRoot}`
+    );
+  }
+}
+
+/**
+ * PUBLIC_INTERFACE
+ * Compute deterministic SWE.6 E2E ports and base URLs.
+ *
+ * Defaults (chosen to avoid collisions with existing integration harnesses):
+ * - vehicle-state: 3401 (env VS_E2E_PORT)
+ * - telematics-ingestion: 3402 (env TI_E2E_PORT)
+ * - vehicle-gateway: 3404 (env GW_E2E_PORT)
+ * - remote-commands: 3406 (env RC_E2E_PORT)
+ * - fleet-management: 3410 (env FM_E2E_PORT)
+ *
+ * @returns {{
+ *  VEHICLE_STATE_BASE_URL: string,
+ *  TELEMATICS_INGESTION_BASE_URL: string,
+ *  VEHICLE_GATEWAY_BASE_URL: string,
+ *  REMOTE_COMMANDS_BASE_URL: string,
+ *  FLEET_MANAGEMENT_BASE_URL: string,
+ *  ports: { vs: number, ti: number, gw: number, rc: number, fm: number }
+ * }}
+ */
+function buildHarnessEnv() {
+  const vs = Number(process.env.VS_E2E_PORT || 3401);
+  const ti = Number(process.env.TI_E2E_PORT || 3402);
+  const gw = Number(process.env.GW_E2E_PORT || 3404);
+  const rc = Number(process.env.RC_E2E_PORT || 3406);
+  const fm = Number(process.env.FM_E2E_PORT || 3410);
+
+  return {
+    VEHICLE_STATE_BASE_URL: `http://127.0.0.1:${vs}`,
+    TELEMATICS_INGESTION_BASE_URL: `http://127.0.0.1:${ti}`,
+    VEHICLE_GATEWAY_BASE_URL: `http://127.0.0.1:${gw}`,
+    REMOTE_COMMANDS_BASE_URL: `http://127.0.0.1:${rc}`,
+    FLEET_MANAGEMENT_BASE_URL: `http://127.0.0.1:${fm}`,
+    ports: { vs, ti, gw, rc, fm },
+  };
 }
 
 /**
@@ -200,6 +252,14 @@ async function startServicesForE2ETests() {
     STORE_MODE: "memory",
     AUTH_REQUIRED: authRequired,
   };
+
+  // Ensure dependencies for all spawned Node services.
+  // This prevents flaky "Cannot find module" failures when E2E runs in a clean workspace.
+  ensureServiceDependencies("vehicle-state", vsRoot);
+  ensureServiceDependencies("telematics-ingestion", tiRoot);
+  ensureServiceDependencies("vehicle-gateway", gwRoot);
+  ensureServiceDependencies("remote-commands", rcRoot);
+  ensureServiceDependencies("fleet-management", fmRoot);
 
   // Start dependencies first, then dependents.
   const vs = spawnService({
